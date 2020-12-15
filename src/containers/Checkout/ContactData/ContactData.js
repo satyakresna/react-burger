@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import Button from '../../../components/UI/Button/Button';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import styles from './ContactData.module.css';
-import axios from '../../../axios-orders';
 import Input from '../../../components/UI/Input/Input';
 
 class ContactData extends Component {
@@ -105,14 +104,22 @@ class ContactData extends Component {
             price: this.props.price,
             orderData: formData
         }
-        axios.post('/orders.json', order)
-            .then(response => {
-                this.setState({ loading: false });
-                this.props.history.push('/');
-            })
-            .catch(error => {
-                this.setState({ loading: false });
-            });
+        fetch('https://react-burger-id.firebaseio.com/orders.json', {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            body: JSON.stringify(order),
+            mode: 'cors'
+        })
+        .then(response => response.json())
+        .then(data => {
+            this.setState({ loading: false });
+            this.props.history.push('/');
+        })
+        .catch(error => {
+            this.setState({ loading: false });
+        });
     }
 
     checkValidity(value, rules) {

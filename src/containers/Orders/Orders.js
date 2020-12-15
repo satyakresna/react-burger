@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 
 import Order from '../../components/Order/Order';
-import axios from '../../axios-orders';
-import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 
 class Orders extends Component {
     state = {
@@ -11,20 +9,21 @@ class Orders extends Component {
     }
 
     componentDidMount() {
-        axios.get('/orders.json')
-            .then(res => {
-                const fetchedOrders = [];
-                for (let key in res.data) {
-                    fetchedOrders.push({
-                        ...res.data[key],
-                        id: key
-                    });
-                }
-                this.setState({loading: false, orders: fetchedOrders});
-            })
-            .catch(err => {
-                this.setState({loading: false});
-            });
+        fetch('https://react-burger-id.firebaseio.com/orders.json')
+        .then(response => response.json())
+        .then(data => {
+            const fetchedOrders = [];
+            for (let key in data) {
+                fetchedOrders.push({
+                    ...data[key],
+                    id: key
+                });
+            }
+            this.setState({loading: false, orders: fetchedOrders});
+        })
+        .catch(err => {
+            this.setState({loading: false});
+        });
     }
 
     render() {
@@ -41,4 +40,4 @@ class Orders extends Component {
     }
 }
 
-export default withErrorHandler(Orders, axios);
+export default Orders;

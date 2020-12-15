@@ -5,8 +5,6 @@ import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import Spinner from '../../components/UI/Spinner/Spinner';
-import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
-import axios from '../../axios-orders';
 
 const INGREDIENT_PRICES = {
     salad: 0.5,
@@ -31,12 +29,13 @@ class BurgerBuilder extends Component {
 
     componentDidMount() {
         console.log(this.props);
-        axios.get('https://react-burger-id.firebaseio.com/ingredients.json')
-        .then(response => {
-            this.setState({ ingredients: response.data });
+        fetch('https://react-burger-id.firebaseio.com/ingredients.json')
+        .then(response => response.json())
+        .then(data => {
+            this.setState({ ingredients: data });
         })
         .catch(error => {
-            this.setState({ error: true });
+            this.setState({ error: true })
         });
     }
 
@@ -149,4 +148,4 @@ class BurgerBuilder extends Component {
     }
 }
 
-export default withErrorHandler(BurgerBuilder, axios);
+export default BurgerBuilder;
