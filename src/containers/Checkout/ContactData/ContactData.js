@@ -92,9 +92,9 @@ class ContactData extends Component {
         loading: false
     }
 
-    orderHandler = ( event ) => {
+    orderHandler = (event) => {
         event.preventDefault();
-        this.setState( { loading: true } );
+        this.setState({ loading: true });
         const formData = {};
         for (let formElementIdentifier in this.state.orderForm) {
             formData[formElementIdentifier] = this.state.orderForm[formElementIdentifier].value;
@@ -104,14 +104,14 @@ class ContactData extends Component {
             price: this.props.price,
             orderData: formData
         }
-        axios.post( '/orders.json', order )
-            .then( response => {
-                this.setState( { loading: false } );
-                this.props.history.push( '/' );
-            } )
-            .catch( error => {
-                this.setState( { loading: false } );
-            } );
+        axios.post('/orders.json', order)
+            .then(response => {
+                this.setState({ loading: false });
+                this.props.history.push('/');
+            })
+            .catch(error => {
+                this.setState({ loading: false });
+            });
     }
 
     checkValidity(value, rules) {
@@ -151,7 +151,7 @@ class ContactData extends Component {
         this.setState({orderForm: updatedOrderForm, formIsValid: formIsValid});
     }
 
-    render () {
+    render() {
         const formElementsArray = [];
         for (let key in this.state.orderForm) {
             formElementsArray.push({
@@ -175,7 +175,7 @@ class ContactData extends Component {
                 <Button btnType="Success" disabled={!this.state.formIsValid}>ORDER</Button>
             </form>
         );
-        if ( this.state.loading ) {
+        if (this.state.loading) {
             form = <Spinner />;
         }
         return (
