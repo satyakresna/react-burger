@@ -1,6 +1,6 @@
 import React from 'react';
 
-import classes from './Order.css';
+import styles from './Order.module.css';
 
 const order = ( props ) => {
     const ingredients = [];
@@ -27,7 +27,7 @@ const order = ( props ) => {
     });
 
     return (
-        <div className={classes.Order}>
+        <div className={styles.Order}>
             <p>Ingredients: {ingredientOutput}</p>
             <p>Price: <strong>USD {Number.parseFloat( props.price ).toFixed( 2 )}</strong></p>
         </div>
