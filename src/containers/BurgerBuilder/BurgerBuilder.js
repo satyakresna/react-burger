@@ -14,10 +14,6 @@ const INGREDIENT_PRICES = {
 };
 
 class BurgerBuilder extends Component {
-    // constructor(props) {
-    //     super(props);
-    //     this.state = {...}
-    // }
     state = {
         ingredients: null,
         totalPrice: 4,
@@ -30,12 +26,17 @@ class BurgerBuilder extends Component {
     componentDidMount() {
         console.log(this.props);
         fetch('https://react-burger-id.firebaseio.com/ingredients.json')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw Error(`${response.statusText}, ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             this.setState({ ingredients: data });
         })
         .catch(error => {
-            this.setState({ error: true })
+            this.setState({ error: error });
         });
     }
 
