@@ -19,8 +19,9 @@ const Modal = (props) => {
     )
 }
 
-const isEqual = (prevProps, nextProps) => {
-    return nextProps.show !== prevProps.show || nextProps.children !== prevProps.children;
-}
-
-export default React.memo(Modal, isEqual)
+export default React.memo(Modal, (prevProps, nextProps) => {
+    if (prevProps.show === nextProps.show && prevProps.children === nextProps.children) {
+        return true;
+    }
+    return false;
+});
