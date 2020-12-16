@@ -1,8 +1,34 @@
 import React, { Component } from 'react';
 
+import Spinner from '../../components/UI/Spinner/Spinner';
 import Input from '../../components/UI/Input/Input';
 import Button from '../../components/UI/Button/Button';
 import styles from './Auth.module.css';
+
+function parseJSON(response) {
+    return new Promise((resolve) => response.json()
+    .then((json) => resolve({
+        status: response.status,
+        ok: response.ok,
+        json
+    })));
+}
+
+function request(url, options) {
+    return new Promise((resolve, reject) => {
+        fetch(url, options)
+            .then(parseJSON)
+            .then(response => {
+                if (response.ok) {
+                    return resolve(response.json);
+                }
+                return reject(response.json);
+            })
+            .catch(error => reject({
+                networkError: error.message
+            }))
+    })
+}
 
 class Auth extends Component {
     state = {
@@ -35,7 +61,12 @@ class Auth extends Component {
                 valid: false,
                 touched: false
             }
-        }
+        },
+        isSignUp: true,
+        token: null,
+        userId: null,
+        error: null,
+        loading: false
     }
 
     checkValidity(value, rules) {
@@ -79,6 +110,54 @@ class Auth extends Component {
         this.setState({controls: updatedControls});
     }
 
+    submitHandler = (event) => {
+        event.preventDefault();
+        this.setState({ loading: true });
+        const formData = {
+            returnSecureToken: true
+        };
+        for (let formElementIdentifier in this.state.controls) {
+            formData[formElementIdentifier] = this.state.controls[formElementIdentifier].value;
+        }
+        let url = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${process.env.REACT_APP_FIREBASE_API_KEY}`;
+        if (!this.state.isSignUp) {
+            url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.REACT_APP_FIREBASE_API_KEY}`;
+        }
+        // cheat
+        request(url, {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            body: JSON.stringify(formData),
+            mode: 'cors'
+        })
+        .then(result => {
+            localStorage.setItem('token', result.idToken);
+            this.setState({
+                userId: result.localId,
+                token: result.idToken,
+                loading: false,
+                error: null
+            });
+        })
+        .catch(err => {
+            this.setState({
+                userId: null,
+                token: null,
+                error: err.error,
+                loading: false
+            });
+        });
+    }
+
+    switchAuthModeHandler = (event) => {
+        event.preventDefault();
+        this.setState(prevState => {
+            return { isSignUp: !prevState.isSignUp };
+        });
+    }
+
     render() {
         const formElementsArray = [];
         for (let key in this.state.controls) {
@@ -87,23 +166,36 @@ class Auth extends Component {
                 config: this.state.controls[key]
             });
         }
+        
+        let errorMessage = null;
+        if (this.state.error) {
+            errorMessage = <p>{this.state.error.message}</p>
+        }
+
+        let form = formElementsArray.map(formElement => (
+            <Input 
+                key={formElement.id}
+                elementType={formElement.config.elementType}
+                elementConfig={formElement.config.elementConfig}
+                value={formElement.config.value}
+                invalid={!formElement.config.valid}
+                shouldValidate={formElement.config.validation}
+                touched={formElement.config.touched}
+                changed={(event) => this.inputChangedHandler(event, formElement.id)} />
+        ));
+        if (this.state.loading) {
+            form = <Spinner />
+        }
         return (
-            <React.Fragment>
-                <form className={styles.Auth}>
-                {formElementsArray.map(formElement => (
-                    <Input 
-                        key={formElement.id}
-                        elementType={formElement.config.elementType}
-                        elementConfig={formElement.config.elementConfig}
-                        value={formElement.config.value}
-                        invalid={!formElement.config.valid}
-                        shouldValidate={formElement.config.validation}
-                        touched={formElement.config.touched}
-                        changed={(event) => this.inputChangedHandler(event, formElement.id)} />
-                ))}
+            <div className={styles.Auth}>
+                {errorMessage}
+                <form onSubmit={this.submitHandler}>
+                    {form}
                 <Button btnType="Success">SUBMIT</Button>
                 </form>
-            </React.Fragment>
+                <Button btnType="Danger"
+                clicked={this.switchAuthModeHandler}>SWITCH TO {this.state.isSignUp ? 'SIGNIN' : 'SIGN UP'}</Button>
+            </div>
         )
     }
 }

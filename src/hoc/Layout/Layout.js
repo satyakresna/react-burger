@@ -20,10 +20,16 @@ class Layout extends Component {
     }
 
     render() {
+        // Using local storage to check whether user is authenticated is a bad idea
+        // TODO: Find a better one
+        let token = localStorage.getItem('token');
         return (
             <React.Fragment>
-                <Toolbar drawerToggleClicked={this.sideDrawerToggleHandler} />
+                <Toolbar 
+                isAuthenticated={token !== null ? true : false}
+                drawerToggleClicked={this.sideDrawerToggleHandler} />
                 <SideDrawer
+                    isAuthenticated={token !== null ? true : false}
                     open={this.state.showSideDrawer}
                     closed={this.sideDrawerClosedHandler} />
                 <main className={styles.Content}>

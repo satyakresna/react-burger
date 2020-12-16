@@ -104,7 +104,8 @@ class ContactData extends Component {
             price: this.props.price,
             orderData: formData
         }
-        fetch('https://react-burger-id.firebaseio.com/orders.json', {
+        let token = localStorage.getItem('token');
+        fetch(`https://react-burger-id.firebaseio.com/orders.json?auth=${token}`, {
             headers: {
                 'Content-Type': 'application/json'
             },

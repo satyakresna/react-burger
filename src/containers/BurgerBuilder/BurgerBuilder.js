@@ -24,7 +24,6 @@ class BurgerBuilder extends Component {
     }
 
     componentDidMount() {
-        console.log(this.props);
         fetch('https://react-burger-id.firebaseio.com/ingredients.json')
         .then(response => {
             if (!response.ok) {
@@ -33,6 +32,7 @@ class BurgerBuilder extends Component {
             return response.json();
         })
         .then(data => {
+            console.log(data);
             this.setState({ ingredients: data });
         })
         .catch(error => {
