@@ -6,14 +6,13 @@ import Logo from '../Logo';
 import NavItems from '../NavItems';
 
 const navbar = (props) => {
-    console.log(props);
     return (
         <header className={styles.Navbar}>
             <NavLink to="/" exact className={styles.Logo}>
                 <Logo />
             </NavLink>
             <nav>
-                <NavItems />
+                <NavItems isLoggedIn={props.isLoggedIn} />
             </nav>
         </header>
     );
