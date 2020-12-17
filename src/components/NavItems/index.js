@@ -7,7 +7,7 @@ const navItems = (props) => {
     console.log('props in navItems', props);
     return (
         <ul className={styles.NavItems}>
-            <NavItem link="/orders">Orders</NavItem>
+            {props.isLoggedIn ? <NavItem link="/orders">Orders</NavItem> : null}
             {!props.isLoggedIn ? <NavItem link="/auth">Authenticate</NavItem> : <NavItem link="/logout">Logout</NavItem>}
         </ul>
     );
