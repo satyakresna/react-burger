@@ -1,4 +1,4 @@
-.Toolbar {
+.Navbar {
     height: 56px;
     width: 100%;
     position: fixed;
@@ -13,7 +13,7 @@
     z-index: 90;
 }
 
-.Toolbar nav {
+.Navbar nav {
     height: 100%;
 }
 
