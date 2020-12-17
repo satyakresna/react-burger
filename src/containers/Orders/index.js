@@ -11,8 +11,7 @@ class Orders extends Component {
     }
 
     componentDidMount() {
-        let token = localStorage.getItem('token');
-        fetch(`https://react-burger-id.firebaseio.com/orders.json?auth=${token}`)
+        fetch(`https://react-burger-id.firebaseio.com/orders.json`)
         .then(response => {
             if (!response.ok) {
                 throw Error(`${response.statusText}, ${response.status}`);
