@@ -44,19 +44,32 @@ class App extends Component {
   }
 
   render() {
+    let routes = (
+      <Switch>
+        <Route path="/checkout" component={Checkout} />
+        <ToggleLoggedInRoute path="/auth" component={Auth} toggleLoggedIn={this.toggleLoggedIn} />
+        <IsLoggedInRoute path="/" exact component={BurgerBuilder} isLoggedIn={this.state.isLoggedIn} />
+        <Redirect to="/" />
+      </Switch>
+    );
+
+    if (this.state.isLoggedIn) {
+      routes = (
+        <Switch>
+          <Route path="/checkout" component={Checkout} />
+          <Route path="/orders" component={Orders} />
+          <Route path="/logout" render={() => <Logout toggleLoggedIn={this.toggleLoggedIn} />} />
+          <ToggleLoggedInRoute path="/auth" component={Auth} toggleLoggedIn={this.toggleLoggedIn} />
+          <IsLoggedInRoute path="/" exact component={BurgerBuilder} isLoggedIn={this.state.isLoggedIn} />
+          <Redirect to="/" />
+        </Switch>
+      );
+    }
     return (
       <React.Fragment>
         <Navbar isLoggedIn={this.state.isLoggedIn} />
         <main className="Content">
-          <Switch>
-            <Route path="/checkout" component={Checkout} />
-            {this.state.isLoggedIn ? <Route path="/orders" component={Orders} /> : null}
-            {!this.state.isLoggedIn 
-            ? <Route path="/auth" render={() => <Auth toggleLoggedIn={this.toggleLoggedIn} />} />
-            : <Route path="/logout" render={() => <Logout toggleLoggedIn={this.toggleLoggedIn} />} />}
-            <Route path="/" exact component={BurgerBuilder} />
-            <Redirect to="/" />
-          </Switch>
+          { routes }
         </main>
       </React.Fragment>
     );
