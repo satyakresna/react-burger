@@ -2,23 +2,8 @@ import React, { Component } from 'react';
 
 import styles from './style.module.css';
 import Toolbar from '../../components/Toolbar';
-import SideDrawer from '../../components/SideDrawer';
 
 class Layout extends Component {
-    state = {
-        showSideDrawer: false
-    }
-
-    sideDrawerClosedHandler = () => {
-        this.setState({ showSideDrawer: false });
-    }
-
-    sideDrawerToggleHandler = () => {
-        this.setState((prevState) => {
-            return { showSideDrawer: !prevState.showSideDrawer };
-        });
-    }
-
     render() {
         // Using local storage to check whether user is authenticated is a bad idea
         // TODO: Find a better one
@@ -26,12 +11,7 @@ class Layout extends Component {
         return (
             <React.Fragment>
                 <Toolbar 
-                isAuthenticated={token !== null ? true : false}
-                drawerToggleClicked={this.sideDrawerToggleHandler} />
-                <SideDrawer
-                    isAuthenticated={token !== null ? true : false}
-                    open={this.state.showSideDrawer}
-                    closed={this.sideDrawerClosedHandler} />
+                isAuthenticated={token !== null ? true : false} />
                 <main className={styles.Content}>
                     {this.props.children}
                 </main>
