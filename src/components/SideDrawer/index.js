@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Logo from '../Logo';
-import NavigationItems from '../NavigationItems';
+import NavItems from '../NavItems';
 import styles from './style.module.css';
 import Backdrop from '../UI/Backdrop';
 
@@ -18,7 +18,7 @@ const sideDrawer = (props) => {
                     <Logo />
                 </div>
                 <nav>
-                    <NavigationItems isAuthenticated={props.isAuthenticated} />
+                    <NavItems isAuthenticated={props.isAuthenticated} />
                 </nav>
             </div>
         </React.Fragment>

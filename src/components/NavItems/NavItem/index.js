@@ -3,8 +3,8 @@ import { NavLink } from 'react-router-dom';
 
 import styles from './style.module.css';
 
-const navigationItem = (props) => (
-    <li className={styles.NavigationItem}>
+const navItem = (props) => (
+    <li className={styles.NavItem}>
         <NavLink 
             to={props.link}
             exact={props.exact}
@@ -12,4 +12,4 @@ const navigationItem = (props) => (
     </li>
 );
 
-export default navigationItem;
+export default navItem;
