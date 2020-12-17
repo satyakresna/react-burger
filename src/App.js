@@ -9,23 +9,12 @@ import Logout from './containers/Logout';
 import Navbar from './components/Navbar';
 import './App.css';
 
-function IsLoggedInRoute({ component: Component, ...rest }) {
+function LoggedInRoute({ component: Component, ...rest }) {
   return (
     <Route
       {...rest}
       render={(routeProps) => (
-        <Component {...routeProps} isLoggedIn={rest.isLoggedIn} />
-      )}
-    />
-  );
-}
-
-function ToggleLoggedInRoute({ component: Component, ...rest }) {
-  return (
-    <Route
-      {...rest}
-      render={(routeProps) => (
-        <Component {...routeProps} toggleLoggedIn={rest.toggleLoggedIn} />
+        <Component {...routeProps} {...rest} />
       )}
     />
   );
