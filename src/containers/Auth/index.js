@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 
 import Spinner from '../../components/UI/Spinner';
 import Input from '../../components/UI/Input';
@@ -145,7 +146,13 @@ class Auth extends Component {
                 error: null
             });
             // Update state in grand parent
-            this.props.toggleLoggedIn();
+            if (window.location.search) {
+                this.props.onSetAuthRedirectPath(`/checkout${window.location.search}`);
+                this.props.toggleLoggedIn();
+            } else {
+                this.props.onSetAuthRedirectPath('/');
+                this.props.toggleLoggedIn();
+            }
         })
         .catch(err => {
             this.setState({
@@ -192,8 +199,16 @@ class Auth extends Component {
         if (this.state.loading) {
             form = <Spinner />
         }
+
+        let authRedirect = null;
+        if (this.props.isLoggedIn) {
+            console.log('set auth redirect path', this.props.setAuthRedirectPath);
+            authRedirect = <Redirect to={this.props.setAuthRedirectPath} />
+        }
+
         return (
             <div className={styles.Auth}>
+                {authRedirect}
                 {errorMessage}
                 <form onSubmit={this.submitHandler}>
                     {form}

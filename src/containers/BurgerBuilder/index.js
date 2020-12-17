@@ -14,6 +14,11 @@ const INGREDIENT_PRICES = {
 };
 
 class BurgerBuilder extends Component {
+    // This class property created for prevent setState for async request
+    // on unmounted components
+    // Please read: https://www.robinwieruch.de/react-warning-cant-call-setstate-on-an-unmounted-component
+    _isMounted = false;
+
     state = {
         ingredients: null,
         totalPrice: 4,
@@ -24,6 +29,8 @@ class BurgerBuilder extends Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
+
         fetch('https://react-burger-id.firebaseio.com/ingredients.json')
         .then(response => {
             if (!response.ok) {
@@ -33,11 +40,19 @@ class BurgerBuilder extends Component {
         })
         .then(data => {
             console.log(data);
-            this.setState({ ingredients: data });
+            if (this._isMounted) {
+                this.setState({ ingredients: data });
+            }
         })
         .catch(error => {
-            this.setState({ error: error });
+            if (this._isMounted) {
+                this.setState({ error: error });
+            }
         });
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     updatePurchaseState(ingredients) {
@@ -83,7 +98,20 @@ class BurgerBuilder extends Component {
     }
 
     purchaseHandler = () => {
-        this.setState({ purchasing: true });
+        if (this.props.isLoggedIn) {
+            this.setState({ purchasing: true });
+        } else {
+            const queryParams = [];
+            for (let i in this.state.ingredients) {
+                queryParams.push(encodeURIComponent(i) + '=' + encodeURIComponent(this.state.ingredients[i]));
+            }
+            queryParams.push('price=' + this.state.totalPrice);
+            const queryString = queryParams.join('&');
+            this.props.history.push({
+                pathname: '/auth',
+                search: `?${queryString}`
+            });
+        }
     }
 
     purchaseCancelHandler = () => {
@@ -125,7 +153,8 @@ class BurgerBuilder extends Component {
                         disabled={disabledInfo}
                         purchasable={this.state.purchasable}
                         ordered={this.purchaseHandler}
-                        price={this.state.totalPrice} />
+                        price={this.state.totalPrice}
+                        isLoggedIn={this.props.isLoggedIn} />
                 </React.Fragment>
             );
             orderSummary = <OrderSummary

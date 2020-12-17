@@ -22,13 +22,20 @@ function LoggedInRoute({ component: Component, ...rest }) {
 
 class App extends Component {
   state = {
-    isLoggedIn: false
+    isLoggedIn: false,
+    setAuthRedirectPath: '/'
   }
 
   toggleLoggedIn = () => {
-    console.log(localStorage.getItem('token'));
+    // console.log(localStorage.getItem('token'));
     this.setState({
       isLoggedIn: !this.state.isLoggedIn
+    });
+  }
+
+  onSetAuthRedirectPath = (path) => {
+    this.setState({
+      setAuthRedirectPath: path
     });
   }
 
@@ -36,8 +43,12 @@ class App extends Component {
     let routes = (
       <Switch>
         <Route path="/checkout" component={Checkout} />
-        <ToggleLoggedInRoute path="/auth" component={Auth} toggleLoggedIn={this.toggleLoggedIn} />
-        <IsLoggedInRoute path="/" exact component={BurgerBuilder} isLoggedIn={this.state.isLoggedIn} />
+        <LoggedInRoute path="/auth" component={Auth} 
+          toggleLoggedIn={this.toggleLoggedIn} 
+          isLoggedIn={this.state.isLoggedIn} 
+          onSetAuthRedirectPath={this.onSetAuthRedirectPath} 
+          setAuthRedirectPath={this.state.setAuthRedirectPath} />
+        <LoggedInRoute path="/" exact component={BurgerBuilder} isLoggedIn={this.state.isLoggedIn} />
         <Redirect to="/" />
       </Switch>
     );
@@ -48,8 +59,12 @@ class App extends Component {
           <Route path="/checkout" component={Checkout} />
           <Route path="/orders" component={Orders} />
           <Route path="/logout" render={() => <Logout toggleLoggedIn={this.toggleLoggedIn} />} />
-          <ToggleLoggedInRoute path="/auth" component={Auth} toggleLoggedIn={this.toggleLoggedIn} />
-          <IsLoggedInRoute path="/" exact component={BurgerBuilder} isLoggedIn={this.state.isLoggedIn} />
+          <LoggedInRoute path="/auth" component={Auth} 
+            toggleLoggedIn={this.toggleLoggedIn} 
+            isLoggedIn={this.state.isLoggedIn} 
+            onSetAuthRedirectPath={this.onSetAuthRedirectPath} 
+            setAuthRedirectPath={this.state.setAuthRedirectPath} />
+          <LoggedInRoute path="/" exact component={BurgerBuilder} isLoggedIn={this.state.isLoggedIn} />
           <Redirect to="/" />
         </Switch>
       );
