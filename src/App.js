@@ -23,19 +23,54 @@ function LoggedInRoute({ component: Component, ...rest }) {
 class App extends Component {
   state = {
     isLoggedIn: false,
-    setAuthRedirectPath: '/'
+    setAuthRedirectPath: '/',
+    token: null,
+    userId: null,
+    expirationDate: null
   }
 
-  toggleLoggedIn = () => {
+  componentDidMount() {
+    const expirationDate = new Date(localStorage.getItem('expirationDate'));
+    if (expirationDate <= new Date() || !localStorage.getItem('token')) {
+      this.logout();
+    } else {
+      this.setState({
+        isLoggedIn: !this.state.isLoggedIn,
+        userId: localStorage.getItem('userId'),
+        token: localStorage.getItem('token'),
+        expirationDate: localStorage.getItem('expirationDate')
+      });
+      setTimeout(() => {
+        this.logout();
+      }, (expirationDate.getTime() - new Date().getTime()));
+    }
+  }
+
+  toggleLoggedIn = (data) => {
     // console.log(localStorage.getItem('token'));
     this.setState({
-      isLoggedIn: !this.state.isLoggedIn
+      isLoggedIn: !this.state.isLoggedIn,
+      userId: data.userId,
+      token: data.token,
+      expirationDate: data.expirationDate
     });
   }
 
   onSetAuthRedirectPath = (path) => {
     this.setState({
       setAuthRedirectPath: path
+    });
+  }
+
+  logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('expirationDate');
+    localStorage.removeItem('userId');
+    this.setState({
+      isLoggedIn: false,
+      userId: null,
+      token: null,
+      expirationDate: null
     });
   }
 
@@ -58,7 +93,8 @@ class App extends Component {
         <Switch>
           <Route path="/checkout" component={Checkout} />
           <Route path="/orders" component={Orders} />
-          <Route path="/logout" render={() => <Logout toggleLoggedIn={this.toggleLoggedIn} />} />
+          <Route path="/logout" render={() => <Logout 
+          logout={this.logout} />} />
           <LoggedInRoute path="/auth" component={Auth} 
             toggleLoggedIn={this.toggleLoggedIn} 
             isLoggedIn={this.state.isLoggedIn} 

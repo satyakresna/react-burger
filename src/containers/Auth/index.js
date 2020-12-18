@@ -139,6 +139,10 @@ class Auth extends Component {
         })
         .then(result => {
             localStorage.setItem('token', result.idToken);
+            localStorage.setItem('userId', result.localId);
+            const expirationDate = new Date(new Date().getTime() + result.expiresIn * 1000);
+            console.log('in auth expire date is: ', expirationDate);
+            localStorage.setItem('expirationDate', expirationDate);
             this.setState({
                 userId: result.localId,
                 token: result.idToken,
@@ -148,10 +152,18 @@ class Auth extends Component {
             // Update state in grand parent
             if (window.location.search) {
                 this.props.onSetAuthRedirectPath(`/checkout${window.location.search}`);
-                this.props.toggleLoggedIn();
+                this.props.toggleLoggedIn({
+                    userId: result.localId,
+                    token: result.idToken,
+                    expirationDate: result.expirationDate
+                });
             } else {
                 this.props.onSetAuthRedirectPath('/');
-                this.props.toggleLoggedIn();
+                this.props.toggleLoggedIn({
+                    userId: result.localId,
+                    token: result.idToken,
+                    expirationDate: result.expirationDate
+                });
             }
         })
         .catch(err => {
