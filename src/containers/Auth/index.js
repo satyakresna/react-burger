@@ -63,9 +63,6 @@ class Auth extends Component {
                 touched: false
             }
         },
-        isSignUp: true,
-        token: null,
-        userId: null,
         error: null,
         loading: false
     }
@@ -144,10 +141,7 @@ class Auth extends Component {
             console.log('in auth expire date is: ', expirationDate);
             localStorage.setItem('expirationDate', expirationDate);
             this.setState({
-                userId: result.localId,
-                token: result.idToken,
-                loading: false,
-                error: null
+                loading: false
             });
             // Update state in grand parent
             if (window.location.search) {
@@ -168,8 +162,6 @@ class Auth extends Component {
         })
         .catch(err => {
             this.setState({
-                userId: null,
-                token: null,
                 error: err.error,
                 loading: false
             });
