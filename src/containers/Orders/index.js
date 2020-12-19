@@ -11,7 +11,7 @@ class Orders extends Component {
     }
 
     componentDidMount() {
-        fetch(`https://react-burger-id.firebaseio.com/orders.json`)
+        fetch(`https://react-burger-id.firebaseio.com/orders.json?auth=${this.props.token}`)
         .then(response => {
             if (!response.ok) {
                 throw Error(`${response.statusText}, ${response.status}`);

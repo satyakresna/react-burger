@@ -92,7 +92,7 @@ class App extends Component {
       routes = (
         <Switch>
           <Route path="/checkout" component={Checkout} />
-          <Route path="/orders" component={Orders} />
+          <Route path="/orders" render={() => <Orders token={this.state.token} />} />
           <Route path="/logout" render={() => <Logout 
           logout={this.logout} />} />
           <LoggedInRoute path="/auth" component={Auth} 
