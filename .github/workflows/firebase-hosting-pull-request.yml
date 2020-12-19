@@ -16,3 +16,4 @@ jobs:
           projectId: react-burger-id
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels
+          REACT_APP_FIREBASE_API_KEY: ${{ secrets.REACT_APP_FIREBASE_API_KEY }}
